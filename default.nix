@@ -2,8 +2,6 @@ with import <nixpkgs> {};
 let
     name = "Flask-env";
     pythonEnv = python38.withPackages (ps: [
-        # ps.numpy
-        # ps.toolz
         ps.pytest_6
         ps.unittest2
         ps.autopep8
@@ -17,8 +15,5 @@ in mkShell {
 
         black
         mypy
-
-        # libffi
-        # openssl
   ];
 }
