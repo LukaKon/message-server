@@ -1,0 +1,5 @@
+database = 'test'
+user = 'lko'
+password = 'Lukasz82'
+port = '5432'
+host = 'localhost'
