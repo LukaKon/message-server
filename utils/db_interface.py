@@ -14,7 +14,7 @@ from db_connection import DatabaseConnection
 
 # sql_db = "SELECT 'CREATE DATABASE message-server' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'message-server')\gexec"
 sql_db = "CREATE DATABASE message_server;"
-sql_users = """\
+sql_users = """
             CREATE TABLE users (
                 id serial PRIMARY KEY,
                 usernamme varchar(255),

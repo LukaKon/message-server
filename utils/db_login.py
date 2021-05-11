@@ -1,4 +1,4 @@
-database = 'test'
+database = 'message_server'
 user = 'lko'
 password = 'Lukasz82'
 port = '5432'

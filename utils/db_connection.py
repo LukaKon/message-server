@@ -3,15 +3,16 @@ import psycopg2
 import subprocess
 import db_login as login
 
+DB_NAME = 'message_server'
+
 
 class DatabaseConnection:
     def __init__(self):
-        subprocess()    # TODO execute command from below
+        # subprocess.run()    # TODO execute command from below
 
-
-"SELECT 'CREATE DATABASE message-server' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'message-server')\gexec"
+        # "SELECT 'CREATE DATABASE message-server' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'message-server')\gexec"
         self.host = login.host
-        self.database = 'message_server'
+        self.database = DB_NAME
         self.user = login.user
         self.password = login.password
         self.port = login.port
