@@ -1,4 +1,3 @@
-import itertools
 import password as ps
 import utils.db_connection as DB
 
@@ -7,7 +6,6 @@ class Users:
     """
     Class to handle users.
     """
-    next_id = itertools.count(1)
 
     def __init__(self, username: str = '', password: str = '', salt: str = '') -> None:
         self._id = -1
@@ -77,4 +75,6 @@ class Messages:
 
 if __name__ == '__main__':
     us = Users('Jan Kowalski', '123456')
+    emp = Users('Anna Zabawa', 'koala123')
     us.save_to_db()
+    emp.save_to_db()
