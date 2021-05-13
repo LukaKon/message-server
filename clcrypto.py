@@ -24,7 +24,7 @@ def hash_password(password, salt=None):
 
     # fill to 16 chars if too short
     if len(salt) < 16:
-        salt += ("a" * (16 - len(salt)))
+        salt += generate_salt()  # ("a" * (16 - len(salt)))
 
     # cut to 16 if too long
     if len(salt) > 16:

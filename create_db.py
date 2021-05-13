@@ -40,7 +40,6 @@ messages_tab = """
                     FOREIGN KEY (to_id) REFERENCES users(id)
                 );
                 """
-# sql_tab = [users_tab, messages_tab]
 
 
 def create_db():

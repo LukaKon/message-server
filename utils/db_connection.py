@@ -1,15 +1,11 @@
 import psycopg2
-# import os
-import subprocess
 import utils.db_login as login
-
-DB_NAME = 'message_server'
 
 
 class DatabaseConnection:
     def __init__(self):
         self.host = login.host
-        self.database = DB_NAME
+        self.database = login.database
         self.user = login.user
         self.password = login.password
         self.port = login.port
