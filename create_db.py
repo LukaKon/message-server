@@ -23,7 +23,7 @@ db = f"CREATE DATABASE {DB};"
 users_tab = """
                 CREATE TABLE public.users (
                     id serial NOT NULL,
-                    username varchar(255) NOT NULL,
+                    username varchar(255) NOT NULL UNIQUE,
                     hashed_password varchar(80),
                     PRIMARY KEY (id)
                 );

@@ -1,6 +1,8 @@
 from os import truncate
 import sys
 import subprocess
+
+import psycopg2
 try:
     import colorama
 except ModuleNotFoundError:
@@ -42,35 +44,39 @@ class Users:
 
     def save_to_db(self):
         if self._id == -1:
-            users_query = """SELECT users.username FROM users"""
-            with DB.DatabaseConnection() as cursor:
-                cursor.execute(users_query)
-                all_names = [row[0] for row in cursor.fetchall()]
+            # users_query = """SELECT users.username FROM users"""
+            # with DB.DatabaseConnection() as cursor:
+            #     cursor.execute(users_query)
+            #     all_names = [row[0] for row in cursor.fetchall()]
             # checking if user exist in database is not necesary because 'else' will update record?
             # TODO create update method separatly... why?
 
-            if self.username not in all_names:
-                query = """INSERT INTO users(username,hashed_password) VALUES (%s,%s) RETURNING id"""
-                values = (self.username, self.hashed_password)
+            # if self.username not in all_names:
+            query = """INSERT INTO users(username,hashed_password) VALUES (%s,%s) RETURNING id"""
+            values = (self.username, self.hashed_password)
+            try:
                 with DB.DatabaseConnection() as cursor:
                     cursor.execute(query, values)
                     self._id = cursor.fetchone()[0]  # ['id']
                     print(f'{Fore.LIGHTGREEN_EX}User added. Your id: {self._id}')
                 return True
-            else:
-                print(f'{Fore.LIGHTRED_EX}User already exist!')
+            except psycopg2.errors.UniqueViolation:
+                print(f'{Fore.LIGHTRED_EX}User "{self.username}" already exist.')
+
         else:
             query = """UPDATE users SET username=%s, hashed_password=%s WHERE id=%s"""
             values = (self.username, self.hashed_password, self.id)
             with DB.DatabaseConnection() as cursor:
                 cursor.execute(query, values)
+            print(f'{Fore.LIGHTGREEN_EX}User datas are updated.')
             return True
 
     def delete(self):
         query = """DELETE FROM users WHERE id=%s"""
         with DB.DatabaseConnection() as cursor:
-            cursor.execute(query, (self._id,))
-        self.id = -1
+            cursor.execute(query, (self.id,))
+        self._id = -1
+        print(f'{Fore.LIGHTBLUE_EX}User "{self.username}" is deleted.')
         return True
 
     @staticmethod
@@ -144,22 +150,30 @@ class Messages:
     def save_to_db(self):
         if self._id == -1:
             query = """INSERT INTO messages(from_id, to_id, message) VALUES (%s,%s,%s) RETURNING id, creation_date"""
-            # query = """INSERT INTO messages(from_id, to_id, message) VALUES (%s,%s,%s) RETURNING creation_date"""
             values = (self.from_id, self.to_id, self.message)
             with DB.DatabaseConnection() as cursor:
                 cursor.execute(query, values)
-                self._id = cursor.fetchone()[0]  # ['id']
-                self._creation_date = cursor.fetchone()[1]
-                # print(self._creation_date)
-                print(f'{Fore.LIGHTGREEN_EX}Message added. message id: {self._id}')
+                self._id, self._creation_date = cursor.fetchone()  # ['id']
+                print(
+                    f'{Fore.LIGHTGREEN_EX}Message added {self._creation_date}. message id: {self._id}')
             return True
 
     def delete(self):
         query = """DELETE FROM messages WHERE id=%s"""
         with DB.DatabaseConnection() as cursor:
-            cursor.execute(query, (self._id,))
-        self.id = -1
+            cursor.execute(query, (self.id,))
+        self._id = -1
         return True
+
+    # def messages_user_sent(self):
+    #     if self._id != 1:
+    #         query = '''SELECT DISTINCT ON (messages.id) users.username, users.id , messages.message, messages.creation_date
+    #         FROM users
+    #         JOIN messages ON users.id=messages.from_id
+    #         WHERE users.id=1'''
+    #         values = self._id,
+    #         with DB.DatabaseConnection() as cursor:
+    #             cursor.execute(query, values)
 
     @staticmethod
     def load_all_messages():
@@ -181,10 +195,12 @@ if __name__ == '__main__':
     em = Users('Anna Zabawa', 'koala123')
     pe = Users('Ewa123', '8924')
     ne = Users('Adam34')
+    na = Users('Adam34')
     us.save_to_db()
     em.save_to_db()
     pe.save_to_db()
     ne.save_to_db()
+    na.save_to_db()
 
     print(Users.load_user_by_username('Jan Kowalski'))
     print(Users.load_user_by_id(2))
@@ -197,10 +213,14 @@ if __name__ == '__main__':
     me_2 = Messages(3, 1, 'Something new')
     me_3 = Messages(2, 3, 'Wiadomości')
     me_4 = Messages(1, 3, 'To Ci mówię... bla bla bla')
+    me_5 = Messages(1, 3, 'To Ci odpowiadam...')
     me_1.save_to_db()
     me_2.save_to_db()
     me_3.save_to_db()
     me_4.save_to_db()
+    me_5.save_to_db()
 
     for i in Messages.load_all_messages():
         print(i)
+
+    na.delete()
