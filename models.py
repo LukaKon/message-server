@@ -144,12 +144,14 @@ class Messages:
     def save_to_db(self):
         if self._id == -1:
             query = """INSERT INTO messages(from_id, to_id, message) VALUES (%s,%s,%s) RETURNING id, creation_date"""
+            # query = """INSERT INTO messages(from_id, to_id, message) VALUES (%s,%s,%s) RETURNING creation_date"""
             values = (self.from_id, self.to_id, self.message)
             with DB.DatabaseConnection() as cursor:
                 cursor.execute(query, values)
                 self._id = cursor.fetchone()[0]  # ['id']
-                # self._creation_date = cursor.fetchone()[1]
-                print(f'{Fore.LIGHTGREEN_EX}Message added. Your id: {self._id}')
+                self._creation_date = cursor.fetchone()[1]
+                # print(self._creation_date)
+                print(f'{Fore.LIGHTGREEN_EX}Message added. message id: {self._id}')
             return True
 
     def delete(self):
@@ -194,9 +196,11 @@ if __name__ == '__main__':
     me_1 = Messages(1, 2, 'new message')
     me_2 = Messages(3, 1, 'Something new')
     me_3 = Messages(2, 3, 'Wiadomości')
+    me_4 = Messages(1, 3, 'To Ci mówię... bla bla bla')
     me_1.save_to_db()
     me_2.save_to_db()
     me_3.save_to_db()
+    me_4.save_to_db()
 
     for i in Messages.load_all_messages():
         print(i)
