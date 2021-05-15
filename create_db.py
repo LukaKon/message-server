@@ -5,11 +5,11 @@ try:
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'colorama'])
 from colorama import init, Fore
-from collections import OrderedDict
 import psycopg2
-# from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+# from psycopg2 import extensions
 import utils.db_login as log
-
+# from utils.db_connection import DatabaseConnection as DB
+# import utils.db_connection as DB
 init(autoreset=True)
 # from psycopg2 import errors
 
@@ -17,9 +17,9 @@ USER = log.user
 HOST = log.host
 PASSWORD = log.password
 PORT = log.port
-DB = 'message_server'
+DB_NAME = 'message_server'
 
-db = f"CREATE DATABASE {DB};"
+db = f"CREATE DATABASE {DB_NAME};"
 users_tab = """
                 CREATE TABLE public.users (
                     id serial NOT NULL,
@@ -55,14 +55,28 @@ def create_db():
             cursor.execute(db)
 
     except psycopg2.errors.DuplicateDatabase:
-        print(f'{Fore.YELLOW}Database "{DB}" already exist.')
+        print(f'{Fore.YELLOW}Database "{DB_NAME}" already exist.')
     else:
-        print(f'{Fore.GREEN}Database "{DB}" created.')
+        print(f'{Fore.GREEN}Database "{DB_NAME}" created.')
     finally:
         conn.close()
 
 
-def create_table(sql_code, db=DB):
+# def cr_db():
+#     try:
+#         with DB.DatabaseConnection() as cursor:
+#             # cursor.autocommit = True
+#             autocommit = extensions.ISOLATION_LEVEL_AUTOCOMMIT
+#             cursor.set_isolation_level(autocommit)
+#             cursor.execute(db)
+#             print('created')
+#     except psycopg2.errors.DuplicateDatabase:
+#         print(f'{Fore.YELLOW}Database "{DB_NAME}" already exist.')
+    # else:
+        # print(f'{Fore.GREEN}Database "{DB_NAME}" created.')
+
+
+def create_table(sql_code, db=DB_NAME):
     """
     Create table in database.
 
@@ -92,5 +106,6 @@ if __name__ == '__main__':
     # create_table(query)
     # create_table(sql_tab[0])
     # create_table(sql_tab[1])
-    create_table(users_tab, DB)
+    create_table(users_tab, DB_NAME)
     create_table(messages_tab)
+    # cr_db()

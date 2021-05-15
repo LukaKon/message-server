@@ -1,13 +1,15 @@
+"""
+    Script allows to manage user data like changing password.
+"""
+
 import argparse
 import models
 import clcrypto
-from utils.db_connection import DatabaseConnection as DB
+# from utils.db_connection import DatabaseConnection as DB
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-u', '--username', help='username'
-                    )
-parser.add_argument('-p', '--password',
-                    help='password (min 8 characters)')
+parser.add_argument('-u', '--username', help='username')
+parser.add_argument('-p', '--password', help='password (min 8 characters)')
 # parser.add_argument(help='new name')  # TODO add possibility to change name
 parser.add_argument('-n', '--new_pass', help='change password')
 parser.add_argument('-l', '--list', help='list all users', action='store_true')
@@ -26,10 +28,7 @@ def create_user(username, password):
 def edit_user_data(username, password, new_pass):
     user = models.Users.load_user_by_username(username)
     if user:
-        print('in base')
-
         if clcrypto.check_password(password, user.hashed_password):
-            print('password ok')
             if len(new_pass) < 8:
                 print('Password is too short.')
             else:

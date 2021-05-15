@@ -176,11 +176,14 @@ class Messages:
     #             cursor.execute(query, values)
 
     @staticmethod
-    def load_all_messages():
-        query = """SELECT id, from_id, to_id, message, creation_date FROM messages"""
+    def load_all_messages(user_id):
+        query = """SELECT id, from_id, to_id, message, creation_date FROM messages WHERE from_id=%s"""
+        values = user_id,
+        # query = """SELECT id, from_id, to_id, message, creation_date FROM messages WHERE from_id=%s OR to_id=%s"""
+        # values = user_id, user_id
         messages = []
         with DB.DatabaseConnection() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, values)
             for row in cursor.fetchall():
                 id_, from_id, to_id, message, creation_date = row
                 loaded_message = Messages(from_id, to_id, message)
@@ -188,6 +191,21 @@ class Messages:
                 loaded_message._creation_date = creation_date
                 messages.append(loaded_message)
         return messages
+
+    # @staticmethod
+    # def load_received_messages(user_id, sender):
+    #     query = """SELECT id, from_id, to_id, message, creation_date FROM messages WHERE from_id=%s,to_id=%s"""
+    #     values = sender, user_id
+    #     messages = []
+    #     with DB.DatabaseConnection() as cursor:
+    #         cursor.execute(query, values)
+    #         for row in cursor.fetchall():
+    #             id_, from_id, to_id, message, creation_date = row
+    #             loaded_message = Messages(from_id, to_id, message)
+    #             loaded_message._id = id_
+    #             loaded_message._creation_date = creation_date
+    #             messages.append(loaded_message)
+    #     return messages
 
 
 if __name__ == '__main__':
@@ -214,13 +232,19 @@ if __name__ == '__main__':
     me_3 = Messages(2, 3, 'Wiadomości')
     me_4 = Messages(1, 3, 'To Ci mówię... bla bla bla')
     me_5 = Messages(1, 3, 'To Ci odpowiadam...')
+    me_6 = Messages(6, 1, 'Nice weather')
+    me_7 = Messages(6, 2, 'Huston, no problem!')
+    me_8 = Messages(6, 3, 'Green, green ,green')
     me_1.save_to_db()
     me_2.save_to_db()
     me_3.save_to_db()
     me_4.save_to_db()
     me_5.save_to_db()
+    me_6.save_to_db()
+    me_7.save_to_db()
+    me_8.save_to_db()
 
-    for i in Messages.load_all_messages():
-        print(i)
+    # for i in Messages.load_all_messages():
+    # print(i)
 
     na.delete()
