@@ -62,20 +62,6 @@ def create_db():
         conn.close()
 
 
-# def cr_db():
-#     try:
-#         with DB.DatabaseConnection() as cursor:
-#             # cursor.autocommit = True
-#             autocommit = extensions.ISOLATION_LEVEL_AUTOCOMMIT
-#             cursor.set_isolation_level(autocommit)
-#             cursor.execute(db)
-#             print('created')
-#     except psycopg2.errors.DuplicateDatabase:
-#         print(f'{Fore.YELLOW}Database "{DB_NAME}" already exist.')
-    # else:
-        # print(f'{Fore.GREEN}Database "{DB_NAME}" created.')
-
-
 def create_table(sql_code, db=DB_NAME):
     """
     Create table in database.
